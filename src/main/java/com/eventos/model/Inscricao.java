@@ -44,4 +44,7 @@ public class Inscricao {
 
     @Column(name = "data_inscricao", nullable = false)
     private LocalDateTime dataInscricao;
+
+    public Inscricao(Evento evento, Participante participante) {
+    }
 }

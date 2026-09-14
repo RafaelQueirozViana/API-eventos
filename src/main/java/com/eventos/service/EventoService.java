@@ -1,6 +1,5 @@
 package com.eventos.service;
 
-
 import com.eventos.model.Evento;
 import com.eventos.repository.EventoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ public class EventoService {
 
     @Autowired
     private EventoRepository eventoRepository;
+
     public List<Evento> listarTodos() {
         return eventoRepository.findAll();
     }
@@ -26,9 +26,11 @@ public class EventoService {
         return eventoRepository.save(evento);
     }
 
+    public int calcularVagasRestantes(Long eventoId) {
+        Evento evento = eventoRepository.findById(eventoId)
+                .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado."));
 
-
-
-
-
+        int inscricoesAtivas = evento.getInscricoes().size();
+        return evento.getCapacidadeMaxima() - inscricoesAtivas;
+    }
 }
