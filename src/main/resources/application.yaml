@@ -1,3 +1,26 @@
 spring:
   application:
     name: Eventos
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/eventos_db
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 8080
