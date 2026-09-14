@@ -6,4 +6,7 @@ import com.eventos.model.Inscricao;
 
 @Repository
 public interface InscricaoRepository  extends JpaRepository<Inscricao, Long> {
+    long countByEventoId(Long id);
+
+    boolean existsByEventoIdAndParticipanteId(Long id, Long id1);
 }
