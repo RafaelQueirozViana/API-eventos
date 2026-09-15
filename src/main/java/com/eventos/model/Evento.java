@@ -55,6 +55,5 @@ public class Evento {
 
     @OneToMany(mappedBy = "evento")
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private List<Inscricao> inscricoes = new ArrayList<>();
 }

@@ -4,25 +4,21 @@ Este sistema em Spring Boot gerencia eventos, participantes e inscrições com c
 
 ## Tecnologias
 * Java
-* Spring Boot (Web e Data JPA)
-* Banco de Dados H2 / PostgreSQL / MySQL
+* Spring Boot
+* Banco de Dados  MySQL
 * Maven
-
-## Fluxo de Git
-Um dos requisitos obrigatórios para essa atividade foi a proibição de commits realizados diretamente na branch main. Nesse cenário, a integração aconteceu através de Pull Requests:
-1. git checkout -b feature/nome-da-funcionalidade
-2. git commit -m "Descricao do ajuste"
-3. git push origin feature/nome-da-funcionalidade
-4. Abra o Pull Request na main
 
 ## Como Executar
 1. Clone o repositório: git clone <url-do-repositorio>
-2. Entre na pasta do projeto pelo IntelliJ
+2. Entre na pasta do projeto pelo IntelliJ IDEA
 3. Rode o arquivo: src/main/java/com/eventos/EventosApplication.java
-4. Acesse em: http://localhost:8080/swagger-ui/index.html#/
+4. Acesse pelo swagger: http://localhost:8080/swagger-ui/index.html#/
 
 ## Diagrama (DER)
 O Diagrama Entidade-Relacionamento está localizado na raiz do projeto como der.png ou der.pdf.
+
+![diagrama.png](./diagrama.png)
+
 
 ## Endpoints da API
 
