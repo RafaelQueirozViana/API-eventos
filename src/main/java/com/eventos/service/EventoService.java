@@ -1,12 +1,12 @@
 package com.eventos.service;
 
+import com.eventos.exception.EventoNaoEncontradoException;
 import com.eventos.model.Evento;
 import com.eventos.repository.EventoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EventoService {
@@ -18,8 +18,11 @@ public class EventoService {
         return eventoRepository.findAll();
     }
 
-    public Optional<Evento> buscarPorId(Long id) {
-        return eventoRepository.findById(id);
+    public Evento buscarPorId(Long id) {
+        return eventoRepository.findById(id)
+                .orElseThrow(() -> new EventoNaoEncontradoException(
+                        "Evento não encontrado."
+                ));
     }
 
     public Evento salvar(Evento evento) {
@@ -27,10 +30,10 @@ public class EventoService {
     }
 
     public int calcularVagasRestantes(Long eventoId) {
-        Evento evento = eventoRepository.findById(eventoId)
-                .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado."));
+        Evento evento = buscarPorId(eventoId);
 
         int inscricoesAtivas = evento.getInscricoes().size();
+
         return evento.getCapacidadeMaxima() - inscricoesAtivas;
     }
 }
