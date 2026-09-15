@@ -51,4 +51,10 @@ public class Evento {
     @Positive(message = "A capacidade máxima deve ser maior que zero")
     @Column(name = "capacidade_maxima", nullable = false)
     private Integer capacidadeMaxima;
+
+
+    @OneToMany(mappedBy = "evento")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Inscricao> inscricoes = new ArrayList<>();
 }
