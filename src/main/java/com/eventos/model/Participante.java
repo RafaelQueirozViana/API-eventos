@@ -38,9 +38,4 @@ public class Participante {
     @Email(message = "O e-mail informado não é válido")
     @Column(nullable = false, unique = true)
     private String email;
-
-    @OneToMany(mappedBy = "participante", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private List<Inscricao> inscricoes = new ArrayList<>();
 }
