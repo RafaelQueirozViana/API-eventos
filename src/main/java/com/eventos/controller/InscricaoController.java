@@ -1,11 +1,14 @@
 package com.eventos.controller;
 
+import com.eventos.dto.InscricaoRequestDTO;
+import com.eventos.dto.InscricaoResponseDTO;
 import com.eventos.model.Evento;
 import com.eventos.model.Inscricao;
 import com.eventos.model.Participante;
 import com.eventos.repository.EventoRepository;
 import com.eventos.repository.InscricaoRepository;
 import com.eventos.repository.ParticipanteRepository;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,22 +32,22 @@ public class InscricaoController {
     private final ParticipanteRepository participanteRepository;
 
     public InscricaoController(InscricaoRepository inscricaoRepository,
-                                EventoRepository eventoRepository,
-                                ParticipanteRepository participanteRepository) {
+       EventoRepository eventoRepository,
+       ParticipanteRepository participanteRepository) {
         this.inscricaoRepository = inscricaoRepository;
         this.eventoRepository = eventoRepository;
         this.participanteRepository = participanteRepository;
     }
 
     @PostMapping
-    public ResponseEntity<Inscricao> inscrever(@RequestBody InscricaoRequest request) {
-        Evento evento = eventoRepository.findById(request.getEventoId())
+    public ResponseEntity<InscricaoResponseDTO> inscrever(@Valid @RequestBody InscricaoRequestDTO dto) {
+        Evento evento = eventoRepository.findById(dto.eventoId())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Evento com id " + request.getEventoId() + " não encontrado"));
+                        HttpStatus.NOT_FOUND, "Evento com id " + dto.eventoId() + " não encontrado"));
 
-        Participante participante = participanteRepository.findById(request.getParticipanteId())
+        Participante participante = participanteRepository.findById(dto.participanteId())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Participante com id " + request.getParticipanteId() + " não encontrado"));
+                        HttpStatus.NOT_FOUND, "Participante com id " + dto.participanteId() + " não encontrado"));
 
         if (inscricaoRepository.existsByEventoIdAndParticipanteId(evento.getId(), participante.getId())) {
             throw new ResponseStatusException(
@@ -57,14 +60,19 @@ public class InscricaoController {
                     HttpStatus.BAD_REQUEST, "O evento está lotado, não há vagas disponíveis");
         }
 
-        Inscricao inscricao = new Inscricao(evento, participante);
+        Inscricao inscricao = new Inscricao();
+        inscricao.setEvento(evento);
+        inscricao.setParticipante(participante);
+
         Inscricao salva = inscricaoRepository.save(inscricao);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salva);
+        return ResponseEntity.status(HttpStatus.CREATED).body(InscricaoResponseDTO.from(salva));
     }
 
     @GetMapping
-    public List<Inscricao> listarTodas() {
-        return inscricaoRepository.findAll();
+    public List<InscricaoResponseDTO> listarTodas() {
+        return inscricaoRepository.findAll().stream()
+                .map(InscricaoResponseDTO::from)
+                .toList();
     }
 
     @DeleteMapping("/{id}")
@@ -75,33 +83,5 @@ public class InscricaoController {
         }
         inscricaoRepository.deleteById(id);
         return ResponseEntity.noContent().build();
-    }
-
-    public static class InscricaoRequest {
-
-        @NotNull(message = "O id do evento é obrigatório")
-        private Long eventoId;
-
-        @NotNull(message = "O id do participante é obrigatório")
-        private Long participanteId;
-
-        public InscricaoRequest() {
-        }
-
-        public Long getEventoId() {
-            return eventoId;
-        }
-
-        public void setEventoId(Long eventoId) {
-            this.eventoId = eventoId;
-        }
-
-        public Long getParticipanteId() {
-            return participanteId;
-        }
-
-        public void setParticipanteId(Long participanteId) {
-            this.participanteId = participanteId;
-        }
     }
 }

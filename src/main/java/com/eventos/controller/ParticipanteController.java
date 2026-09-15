@@ -1,5 +1,7 @@
 package com.eventos.controller;
 
+import com.eventos.dto.ParticipanteRequestDTO;
+import com.eventos.dto.ParticipanteResponseDTO;
 import com.eventos.model.Participante;
 import com.eventos.repository.ParticipanteRepository;
 import jakarta.validation.Valid;
@@ -26,26 +28,33 @@ public class ParticipanteController {
     }
 
     @PostMapping
-    public ResponseEntity<Participante> cadastrar(@Valid @RequestBody Participante participante) {
-        if (participanteRepository.existsByEmail(participante.getEmail())) {
+    public ResponseEntity<ParticipanteResponseDTO> cadastrar(@Valid @RequestBody ParticipanteRequestDTO dto) {
+        if (participanteRepository.existsByEmail(dto.email())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Já existe um participante cadastrado com este e-mail");
         }
 
+        Participante participante = new Participante();
+        participante.setNome(dto.nome());
+        participante.setEmail(dto.email());
+
         Participante salvo = participanteRepository.save(participante);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ParticipanteResponseDTO.from(salvo));
     }
 
     @GetMapping
-    public List<Participante> listarTodos() {
-        return participanteRepository.findAll();
+    public List<ParticipanteResponseDTO> listarTodos() {
+        return participanteRepository.findAll().stream()
+                .map(ParticipanteResponseDTO::from)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Participante> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ParticipanteResponseDTO> buscarPorId(@PathVariable Long id) {
         Participante participante = participanteRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Participante com id " + id + " não encontrado"));
-        return ResponseEntity.ok(participante);
+        return ResponseEntity.ok(ParticipanteResponseDTO.from(participante));
     }
 }
+

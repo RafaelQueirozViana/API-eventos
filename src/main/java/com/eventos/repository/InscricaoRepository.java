@@ -4,9 +4,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import com.eventos.model.Inscricao;
 
-@Repository
-public interface InscricaoRepository  extends JpaRepository<Inscricao, Long> {
-    long countByEventoId(Long id);
+import java.util.List;
 
-    boolean existsByEventoIdAndParticipanteId(Long id, Long id1);
+@Repository
+public interface InscricaoRepository extends JpaRepository<Inscricao, Long> {
+
+    List<Inscricao> findByEventoId(Long eventoId);
+
+    long countByEventoId(Long eventoId);
+
+    boolean existsByEventoIdAndParticipanteId(Long eventoId, Long participanteId);
 }
