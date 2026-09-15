@@ -12,12 +12,12 @@ Este sistema em Spring Boot gerencia eventos, participantes e inscrições com c
 1. Clone o repositório: git clone <url-do-repositorio>
 2. Entre na pasta do projeto pelo IntelliJ IDEA
 3. Rode o arquivo: src/main/java/com/eventos/EventosApplication.java
-4. Acesse em: http://localhost:8080/swagger-ui/index.html#/
+4. Acesse pelo swagger: http://localhost:8080/swagger-ui/index.html#/
 
 ## Diagrama (DER)
 O Diagrama Entidade-Relacionamento está localizado na raiz do projeto como der.png ou der.pdf.
 
-![img.png](img.png)
+![diagrama.png](./diagrama.png)
 
 
 ## Endpoints da API
