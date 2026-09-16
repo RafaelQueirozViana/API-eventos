@@ -3,15 +3,16 @@ package com.eventos.controller;
 import com.eventos.dto.EventoRequestDTO;
 import com.eventos.dto.EventoResponseDTO;
 import com.eventos.dto.ParticipanteResponseDTO;
-import com.eventos.model.Evento;
-import com.eventos.model.Participante;
-import com.eventos.repository.EventoRepository;
-import com.eventos.repository.InscricaoRepository;
+import com.eventos.service.EventoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -19,55 +20,29 @@ import java.util.List;
 @RequestMapping("/eventos")
 public class EventoController {
 
-    private final EventoRepository eventoRepository;
-    private final InscricaoRepository inscricaoRepository;
+    private final EventoService eventoService;
 
-    public EventoController(EventoRepository eventoRepository, InscricaoRepository inscricaoRepository) {
-        this.eventoRepository = eventoRepository;
-        this.inscricaoRepository = inscricaoRepository;
+    public EventoController(EventoService eventoService) {
+        this.eventoService = eventoService;
     }
 
     @PostMapping
     public ResponseEntity<EventoResponseDTO> cadastrar(@Valid @RequestBody EventoRequestDTO dto) {
-        Evento evento = new Evento();
-        evento.setNome(dto.nome());
-        evento.setDescricao(dto.descricao());
-        evento.setData(dto.data());
-        evento.setLocal(dto.local());
-        evento.setCapacidadeMaxima(dto.capacidadeMaxima());
-
-        Evento salvo = eventoRepository.save(evento);
-        return ResponseEntity.status(HttpStatus.CREATED).body(EventoResponseDTO.from(salvo, 0));
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.cadastrar(dto));
     }
 
     @GetMapping
     public List<EventoResponseDTO> listarTodos() {
-        return eventoRepository.findAll().stream()
-                .map(evento -> EventoResponseDTO.from(evento, inscricaoRepository.countByEventoId(evento.getId())))
-                .toList();
+        return eventoService.listarTodos();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EventoResponseDTO> buscarPorId(@PathVariable Long id) {
-        Evento evento = buscarEventoOuFalhar(id);
-        long inscricoesAtivas = inscricaoRepository.countByEventoId(id);
-        return ResponseEntity.ok(EventoResponseDTO.from(evento, inscricoesAtivas));
+        return ResponseEntity.ok(eventoService.buscarPorId(id));
     }
 
     @GetMapping("/{id}/participantes")
     public ResponseEntity<List<ParticipanteResponseDTO>> listarParticipantes(@PathVariable Long id) {
-        buscarEventoOuFalhar(id);
-
-        List<ParticipanteResponseDTO> participantes = inscricaoRepository.findByEventoId(id).stream()
-                .map(inscricao -> ParticipanteResponseDTO.from(inscricao.getParticipante()))
-                .toList();
-
-        return ResponseEntity.ok(participantes);
-    }
-
-    private Evento buscarEventoOuFalhar(Long id) {
-        return eventoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Evento com id " + id + " não encontrado"));
+        return ResponseEntity.ok(eventoService.listarParticipantes(id));
     }
 }
