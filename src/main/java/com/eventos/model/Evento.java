@@ -52,8 +52,8 @@ public class Evento {
     @Column(name = "capacidade_maxima", nullable = false)
     private Integer capacidadeMaxima;
 
-
     @OneToMany(mappedBy = "evento")
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Inscricao> inscricoes = new ArrayList<>();
 }

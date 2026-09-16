@@ -11,7 +11,10 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "inscricao")
+@Table(name = "inscricao",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_inscricao_evento_participante",
+                columnNames = {"evento_id", "participante_id"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,11 +27,15 @@ public class Inscricao {
     @NotNull(message = "O evento é obrigatório")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "evento_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Evento evento;
 
     @NotNull(message = "O participante é obrigatório")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participante_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Participante participante;
 
     @Column(name = "data_inscricao", nullable = false)
